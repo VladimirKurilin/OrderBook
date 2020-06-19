@@ -15,7 +15,6 @@ pipenv run python3 -m orderbook
 * Detailed logging will allow you to restore events even without access to script output.
 * Compliance with `isort`, `black`, `flake8`, `mypy`, `pytest`
 
-
 If you want to setup pre-commit and pre-push checks you may consider setting up corresponding hooks:
 ```shell script
 pipenv run pre-commit install -t pre-commit
