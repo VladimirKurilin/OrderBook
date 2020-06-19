@@ -101,9 +101,8 @@ def test_iceberg_vs_limit_hidden_partial_fill(caplog) -> None:
         (
             "root",
             10,
-            "S,3,9,0,None filled by hidden B,(p:10,t:1,n:0)->(visible:0,m:20,q:5)->(Id:1). Volume 15",
+            "S,3,9,0,None filled by hidden B,(p:10,t:3,n:0)->(visible:5,m:20,q:5)->(Id:1). Volume 15",
         ),
-        ("root", 10, "Peak updated: B,(p:10,t:3,n:0)->(visible:5,m:20,q:5)->(Id:1)"),
         ("root", 10, "Peak updated: B,(p:10,t:3,n:1)->(visible:10,m:10,q:15)->(Id:2)"),
         ("root", 20, "Transaction: <1,3,10,35>"),
         ("root", 20, "Transaction: <2,3,10,10>"),
@@ -121,7 +120,7 @@ def test_limit_vs_iceberg_complete_fill(caplog) -> None:
 
     assert add("S,1,10,40,20") == []
 
-    assert repr(add("B,2,11,45")) == "[<2,1,10,40>]"
+    assert str(add("B,2,11,45")) == "[<2,1,10,40>]"
     assert (
         str(book)
         in """
@@ -147,7 +146,7 @@ def test_limit_vs_iceberg_complete_fill(caplog) -> None:
         (
             "root",
             10,
-            "B,2,11,5,None filled by hidden S,(p:10,t:1,n:0)->(visible:0,m:20,q:0)->(Id:1). Volume 20",
+            "B,2,11,5,None filled by hidden S,(p:10,t:2,n:0)->(visible:0,m:20,q:0)->(Id:1). Volume 20",
         ),
         ("root", 20, "Transaction: <2,1,10,40>"),
         ("root", 20, "Record inserted: B,(p:11,t:2,n:0)->(visible:5,m:5,q:5)->(Id:2)"),

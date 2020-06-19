@@ -185,9 +185,19 @@ class OrderBook:
                 if order.quantity == 0:
                     break
 
-                filled_quantity = min(order.quantity, record.quantity)
+                if record.quantity > order.quantity:
+                    max_peak = record.max_peak_size
+                    q, r = divmod(order.quantity, max_peak)
+                    record.current_peak_size = min(
+                        record.max_peak_size - r, record.quantity - max_peak * q
+                    )
+                    filled_quantity = order.quantity
+                else:
+                    filled_quantity = record.quantity
+
                 record.quantity -= filled_quantity
                 order.quantity -= filled_quantity
+                record.timestamp = self.timestamp
 
                 transactions[(record.order_id, record.price)] += filled_quantity
                 if filled_quantity != 0:
