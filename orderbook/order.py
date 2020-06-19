@@ -97,6 +97,11 @@ class Order:
 
     @classmethod
     def from_string(cls, data: str, logger_name=None):
+        """
+        :param data: Order string in following format: DIRECTION,ID,PRICE,QUANTITY[,PEAK_SIZE]
+        :param logger_name: Logger name. Default: root
+        :return: Order object
+        """
         logger = logging.getLogger(logger_name)
         if not isinstance(data, str):
             logger.error(f"Expected str, got {data}")

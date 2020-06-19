@@ -7,7 +7,9 @@ verify_ssl = true
 python_version = "3.8"
 
 [packages]
-sqlalchemy = "*"
+sortedcontainers = "*"
+tabulate = "*"
+mock = "*"
 
 [dev-packages]
 black = "==19.3b0"
