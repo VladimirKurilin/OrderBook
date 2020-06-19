@@ -1,6 +1,7 @@
 from logging import DEBUG
 
-from orderbook.book import Order, OrderBook
+from orderbook.book import OrderBook
+from orderbook.order import Order
 
 
 def test_iceberg_vs_limit_partial_fill(caplog) -> None:

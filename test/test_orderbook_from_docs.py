@@ -1,6 +1,7 @@
 from logging import DEBUG
 
-from orderbook.book import Order, OrderBook
+from orderbook.book import OrderBook
+from orderbook.order import Order
 
 
 def test_order_tranching(caplog) -> None:

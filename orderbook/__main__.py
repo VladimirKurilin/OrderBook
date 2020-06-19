@@ -1,6 +1,9 @@
-def init() -> None:
+import orderbook.application
+
+
+def run():
     if __name__ == "__main__":
-        pass
+        orderbook.application.start()
 
 
-init()
+run()

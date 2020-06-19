@@ -5,7 +5,7 @@ from typing import List
 
 from sortedcontainers import SortedList
 
-from orderbook.order import Order
+import orderbook.order as order
 
 
 class OrderBookRecord:
@@ -18,7 +18,7 @@ class OrderBookRecord:
     timestamp: int
     order_priority: int
 
-    def __init__(self, order: Order, timestamp: int, order_priority: int = 0):
+    def __init__(self, order: order.Order, timestamp: int, order_priority: int = 0):
         self.order_id = order.order_id
         self.max_peak_size = (
             order.peak_size if order.peak_size is not None else order.quantity
@@ -72,7 +72,7 @@ class Transaction:
         return f"<{self.buy_id},{self.sell_id},{self.price},{self.quantity}>"
 
     def __str__(self):
-        return repr(self)
+        return f"{self.buy_id},{self.sell_id},{self.price},{self.quantity}"
 
 
 class OrderBook:
@@ -139,7 +139,7 @@ class OrderBook:
         )
         return "\n".join(rows)
 
-    def add(self, order: Order) -> List[Transaction]:
+    def add(self, order: order.Order) -> List[Transaction]:
         self.timestamp += 1
         order = deepcopy(order)
         transactions = self.try_to_fill_an_order(order)
@@ -152,7 +152,7 @@ class OrderBook:
             self.__logger.info(f"{order} was completely executed")
         return transactions
 
-    def try_to_fill_an_order(self, order: Order) -> List[Transaction]:
+    def try_to_fill_an_order(self, order: order.Order) -> List[Transaction]:
         against = self.sell if order.is_buy else self.buy
 
         transactions = {}
@@ -231,12 +231,12 @@ class OrderBook:
                 buy_id, sell_id = sell_id, buy_id
 
             res.append(Transaction(buy_id, sell_id, price, volume))
-            self.__logger.info(f"Transaction: {res[-1]}")
+            self.__logger.info(f"Transaction: {repr(res[-1])}")
 
         return res
 
     @staticmethod
-    def __is_good_price(order: Order, record: OrderBookRecord) -> bool:
+    def __is_good_price(order: order.Order, record: OrderBookRecord) -> bool:
         if order.is_buy:
             return order.price >= record.price
         else:
