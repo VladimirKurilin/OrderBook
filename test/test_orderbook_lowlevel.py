@@ -123,3 +123,19 @@ def test_order_record_comparison() -> None:
         assert (
             e.args[0] == "Orders with same price and date cannot have equal priority."
         )
+
+
+def test_id_uniqueness(caplog) -> None:
+    book = OrderBook()
+
+    def add(data):
+        return book.add(Order.from_string(data))
+
+    assert add("B,1138,31502,7500") == []
+    assert len(book.buy) == 1 and len(book.sell) == 0
+
+    assert add("B,1138,31502,7500") == []
+    assert len(book.buy) == 1 and len(book.sell) == 0
+    assert caplog.record_tuples == [
+        ("root", 40, "Updating orders is prohibited: B,1138,31502,7500,None")
+    ]

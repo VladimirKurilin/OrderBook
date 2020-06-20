@@ -67,7 +67,7 @@ class Order:
             if not isinstance(value, int):
                 logger.error(f"Unexpected type {name}: {value}")
                 return None, False
-            if value and (value <= min or value > max):
+            if value <= min or value > max:
                 logger.error(f"Unexpected {name}: {value}")
                 return None, False
             return value, True

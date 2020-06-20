@@ -54,6 +54,11 @@ def test_fail_from_string(caplog) -> None:
     assert "invalid literal for int() with base 10: ''\n" in caplog.text
     caplog.clear()
 
+    order = Order.from_string("B,1,2,3,0")
+    assert order is None
+    assert "Unexpected peak_size: 0" in caplog.text
+    caplog.clear()
+
 
 def test_fail_create(caplog) -> None:
     # noinspection PyTypeChecker

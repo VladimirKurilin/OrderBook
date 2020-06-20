@@ -5,6 +5,8 @@ Iceberg Orders Service & Technical Description”.
 
 ## Getting started
 ```shell script
+git clone git@github.com:VladimirKurilin/OrderBook.git
+cd orderbook
 pipenv install
 pipenv run python3 -m orderbook
 ```

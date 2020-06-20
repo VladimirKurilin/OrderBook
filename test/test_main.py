@@ -4,13 +4,13 @@ import mock
 
 
 def test_init():
-    test_input = (
+    input_data = (
         "\nB,1,99,50000\n # ;sadkf;asf\nS,2,105,20000\n\n\n\n\nS,3,100,10000\n\n\nB,4,98,25500\nS,5,103,"
         "10000\n                       # ke;akef;\nS,6,100,10000\nB,7,103,30000\nS,5,98,75500,10000 "
     )
 
-    with mock.patch("sys.stdin", new=StringIO(test_input)):
-        with mock.patch("sys.stdout", new=StringIO()) as test_stdout:
+    with mock.patch("sys.stdin", new=StringIO(input_data)):
+        with mock.patch("sys.stdout", new=StringIO()) as output_data:
             from orderbook import __main__ as module
 
             with mock.patch.object(module, "__name__", "__main__"):
@@ -18,7 +18,7 @@ def test_init():
                 module.run()
 
                 assert (
-                    test_stdout.getvalue()
+                    output_data.getvalue()
                     in """
 +-----------------------------------------------------------------+
 | BUY                            | SELL                           |
