@@ -5,10 +5,12 @@ from orderbook.order import Order
 
 
 class InputLexer:
-    def __init__(self, input_stream, buffer_limit: int = 20, logger_name: str = None):
+    def __init__(
+        self, input_stream, buffer_limit: int = 20, logger=logging.getLogger()
+    ):
         self.input_stream = input_stream
         self.buffer_limit = buffer_limit
-        self.__logger = logging.getLogger(logger_name)
+        self.__logger = logger
         self.__line_count = 0
 
     def get(self) -> Optional[Order]:

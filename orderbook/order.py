@@ -51,10 +51,9 @@ class Order:
         price: int = None,
         quantity: int = None,
         peak_size: int = None,
-        logger_name=None,
+        logger=logging.getLogger(),
     ):
 
-        logger = logging.getLogger(logger_name)
         ok = True
 
         if is_buy and not isinstance(is_buy, bool):
@@ -96,13 +95,12 @@ class Order:
         return cls(is_buy, order_id, price, quantity, peak_size, logger)
 
     @classmethod
-    def from_string(cls, data: str, logger_name=None):
+    def from_string(cls, data: str, logger=logging.getLogger()):
         """
         :param data: Order string in following format: DIRECTION,ID,PRICE,QUANTITY[,PEAK_SIZE]
-        :param logger_name: Logger name. Default: root
+        :param logger: Logger instance. Default: root logger from logging module
         :return: Order object
         """
-        logger = logging.getLogger(logger_name)
         if not isinstance(data, str):
             logger.error(f"Expected str, got {data}")
             return None
@@ -136,4 +134,4 @@ class Order:
             logger.error(e)
             return None
 
-        return Order.create(is_buy, order_id, price, quantity, peak_size, logger_name)
+        return Order.create(is_buy, order_id, price, quantity, peak_size, logger)

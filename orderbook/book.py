@@ -5,74 +5,9 @@ from typing import Dict, Iterable, List, Tuple
 
 from sortedcontainers import SortedList
 
-import orderbook.order as order
-
-
-class OrderBookRecord:
-    is_buy: bool
-    order_id: int
-    max_peak_size: int
-    current_peak_size: int
-    price: int
-    quantity: int
-    timestamp: int
-    order_priority: int
-
-    def __init__(self, order: order.Order, timestamp: int, order_priority: int = 0):
-        self.order_id = order.order_id
-        self.max_peak_size = (
-            order.peak_size if order.peak_size is not None else order.quantity
-        )
-        self.current_peak_size = self.max_peak_size
-        self.price = order.price
-        self.quantity = order.quantity
-        self.is_buy = order.is_buy
-        self.timestamp = timestamp
-        self.order_priority = order_priority
-        assert self.max_peak_size == self.current_peak_size
-        assert self.quantity >= self.max_peak_size
-
-    def __lt__(self, other):
-        if self.is_buy != other.is_buy:
-            raise ValueError("Only Orders with the same is_buy value are comparable.")
-
-        if self.price == other.price:
-            if self.timestamp == other.timestamp:
-                if self.order_priority == other.order_priority:
-                    raise ValueError(
-                        "Orders with same price and date cannot have equal priority."
-                    )
-                return self.order_priority < other.order_priority
-            return self.timestamp < other.timestamp
-
-        if self.is_buy is True:
-            return self.price > other.price
-        return self.price < other.price
-
-    def __repr__(self):
-        return (
-            f"{'B' if self.is_buy else 'S'},(p:{self.price},t:{self.timestamp},n:{self.order_priority})"
-            + f"->(visible:{self.current_peak_size},m:{self.max_peak_size},q:{self.quantity})->(Id:{self.order_id})"
-        )
-
-
-class Transaction:
-    buy_id: int
-    sell_id: int
-    price: int
-    quantity: int
-
-    def __init__(self, buy_id: int, sell_id: int, price: int, quantity: int):
-        self.buy_id = buy_id
-        self.sell_id = sell_id
-        self.price = price
-        self.quantity = quantity
-
-    def __repr__(self):
-        return f"<{self.buy_id},{self.sell_id},{self.price},{self.quantity}>"
-
-    def __str__(self):
-        return f"{self.buy_id},{self.sell_id},{self.price},{self.quantity}"
+from orderbook.order import Order
+from orderbook.orderbookrecord import OrderBookRecord
+from orderbook.transaction import Transaction
 
 
 class OrderBook:
@@ -139,7 +74,7 @@ class OrderBook:
         )
         return "\n".join(rows)
 
-    def add(self, order: order.Order) -> List[Transaction]:
+    def add(self, order: Order) -> List[Transaction]:
         self.timestamp += 1
         order = deepcopy(order)
         for record in chain(self.buy, self.sell):
@@ -157,7 +92,7 @@ class OrderBook:
             self.__logger.info(f"{order} was completely executed")
         return transactions
 
-    def __try_to_fill_an_order(self, order: order.Order) -> List[Transaction]:
+    def __try_to_fill_an_order(self, order: Order) -> List[Transaction]:
         against = self.sell if order.is_buy else self.buy
 
         transactions: Dict[Tuple[int, int], int] = dict()
@@ -193,7 +128,7 @@ class OrderBook:
         return res
 
     @staticmethod
-    def __is_good_price(order: order.Order, record: OrderBookRecord) -> bool:
+    def __is_good_price(order: Order, record: OrderBookRecord) -> bool:
         if order.is_buy:
             return order.price >= record.price
         else:
@@ -209,7 +144,7 @@ class OrderBook:
 
     def __fill_visible_peak_sizes(
         self,
-        order: order.Order,
+        order: Order,
         records: Iterable[OrderBookRecord],
         transactions: Dict[Tuple[int, int], int],
     ) -> None:
@@ -229,7 +164,7 @@ class OrderBook:
 
     def __fill_hidden_iceberg_orders(
         self,
-        order: order.Order,
+        order: Order,
         records: Iterable[OrderBookRecord],
         transactions: Dict[Tuple[int, int], int],
     ) -> None:
